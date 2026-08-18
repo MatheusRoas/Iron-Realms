@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Iron Realms</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <div id="toastContainer" class="toast-container" aria-live="polite" aria-atomic="false"></div>
+
+      <aside class="sidebar">
+        <div class="brand-block">
+          <p class="eyebrow" data-i18n="brand.eyebrow">Meu reino</p>
+          <h1>Iron Realms</h1>
+        </div>
+
+        <div class="lang-switch" role="group" data-i18n-aria-label="lang.switch.aria" aria-label="Idioma">
+          <button type="button" class="lang-option" data-lang-option="pt-BR" data-i18n="lang.switch.pt">PT</button>
+          <button type="button" class="lang-option" data-lang-option="es-ES" data-i18n="lang.switch.es">ES</button>
+        </div>
+
+        <nav class="side-nav" data-i18n-aria-label="nav.aria.main" aria-label="Navegação principal">
+          <button class="nav-item is-active" type="button" data-view="overview"><span>◈</span> <span data-i18n="nav.overview">Visão Geral</span></button>
+          <button class="nav-item" type="button" data-view="buildings"><span>▣</span> <span data-i18n="nav.buildings">Edifícios</span></button>
+          <button class="nav-item" type="button" data-view="army"><span>⚔</span> <span data-i18n="nav.army">Exército</span></button>
+          <button class="nav-item" type="button" data-view="map"><span>⌖</span> <span data-i18n="nav.map">Mapa</span></button>
+          <button class="nav-item" type="button" data-view="reports"><span>▤</span> <span data-i18n="nav.reports">Relatórios</span></button>
+          <button class="nav-item" type="button" data-view="inventory"><span>✦</span> <span data-i18n="nav.inventory">Inventário</span></button>
+        </nav>
+
+      </aside>
+
+      <div class="game-shell">
+        <header class="topbar">
+          <div class="topbar-copy">
+            <p class="eyebrow" data-i18n="topbar.eyebrow">Castelo</p>
+            <h2>Castelo de Ferro</h2>
+          </div>
+
+          <div class="topbar-meta">
+            <div class="header-status">
+              <span class="status-dot"></span>
+              <span id="realmStatusText" data-i18n="status.order">Reino em ordem</span>
+            </div>
+            <button id="eventsCenterButton" class="events-center" type="button" data-i18n-aria-label="events.aria" aria-label="Central de acontecimentos">
+              <span aria-hidden="true">🔔</span>
+              <span id="eventsCenterBadge" class="events-center-badge" hidden>0</span>
+            </button>
+          </div>
+
+        </header>
+
+        <main class="layout">
+          <aside class="panel left-panel">
+            <section class="panel-block">
+              <h2 data-i18n="panel.resources.title">Recursos</h2>
+              <div id="resourceList" class="resource-grid"></div>
+            </section>
+
+            <section class="panel-block">
+              <h2 data-i18n="panel.summary.title">Resumo do reino</h2>
+              <ul id="summaryList" class="summary-list"></ul>
+            </section>
+          </aside>
+
+          <section class="main-column">
+            <section class="panel overview-panel" data-view="overview">
+            <div class="panel-header">
+              <h2 data-i18n="panel.overview.title">Visão Geral</h2>
+                <span class="panel-tag" data-i18n="panel.overview.tag">Mesa do rei</span>
+            </div>
+            <div id="fortressSummary" class="fortress-summary" aria-live="polite"></div>
+            <div id="overviewSignals" class="overview-signals" aria-live="polite"></div>
+            <div id="overviewCards" class="overview-grid"></div>
+          </section>
+
+          <section class="panel activity-panel" data-view="overview">
+            <div class="panel-header">
+              <h2 data-i18n="panel.activity.title">Painel de atividade</h2>
+              <span class="panel-tag" data-i18n="panel.activity.tag">Reino em movimento</span>
+            </div>
+            <div id="activityPanel" class="activity-panel-inner"></div>
+          </section>
+
+          <section class="panel priority-panel" data-view="overview">
+            <div class="panel-header">
+              <h2 data-i18n="panel.priority.title">Ações prioritárias</h2>
+              <span class="panel-tag" data-i18n="panel.priority.tag">Decisões urgentes</span>
+            </div>
+            <div id="priorityPanel" class="priority-panel-inner"></div>
+          </section>
+
+          <section class="panel hero-panel" data-view="overview">
+            <p class="eyebrow" data-i18n="hero.eyebrow">Conselho</p>
+            <h2 id="counselorText" data-i18n="hero.default">Meu rei, o reino aguarda suas ordens.</h2>
+          </section>
+
+          <section class="panel" data-view="reports">
+            <div class="panel-header">
+              <h2 data-i18n="panel.reports.title">Relatórios</h2>
+              <span id="reportCount" class="panel-tag" data-i18n="panel.reports.count.default">0 registros</span>
+            </div>
+            <div id="reportFilters" class="report-filters"></div>
+            <div id="reportPanel" class="report-panel"></div>
+          </section>
+
+          <section class="panel" data-view="buildings">
+            <div class="panel-header">
+              <h2 data-i18n="panel.queue.title">Obras em andamento</h2>
+            </div>
+            <div id="queuePanel" class="queue-panel"></div>
+          </section>
+
+          <section class="panel" data-view="map">
+            <div class="panel-header">
+              <h2 data-i18n="panel.map.title">Mapa do reino</h2>
+            </div>
+            <div id="worldPanel" class="world-panel"></div>
+          </section>
+
+          <section class="panel" data-view="inventory">
+            <div class="panel-header">
+              <h2 data-i18n="panel.inventory.title">Inventário</h2>
+            </div>
+            <div id="inventoryPanel" class="inventory-panel"></div>
+          </section>
+
+          <section class="panel" data-view="buildings">
+            <div class="panel-header">
+              <h2 data-i18n="panel.buildings.title">Estruturas</h2>
+            </div>
+            <div id="buildingList" class="building-list"></div>
+          </section>
+
+          <section class="panel" data-view="army">
+            <div class="panel-header">
+              <h2 data-i18n="panel.army.title">Praça de Reunião</h2>
+            </div>
+            <div id="armyPanel" class="building-list"></div>
+          </section>
+        </section>
+
+        <aside class="panel right-panel">
+          <nav class="side-nav side-nav-mini" data-i18n-aria-label="nav.aria.side" aria-label="Navegação do reino">
+            <button class="nav-item" type="button" data-side-view="log"><span>▤</span> <span data-i18n="side.log">Registro</span></button>
+            <button class="nav-item" type="button" data-side-view="court"><span>♛</span> <span data-i18n="side.court">Corte</span></button>
+            <button class="nav-item" type="button" data-side-view="market"><span>⚖</span> <span data-i18n="side.market">Mercado</span></button>
+            <button class="nav-item" type="button" data-side-view="territory"><span>⛰</span> <span data-i18n="side.territory">Território</span></button>
+            <button class="nav-item" type="button" data-side-view="network"><span>⌁</span> <span data-i18n="side.network">Rede</span></button>
+            <button class="nav-item" type="button" data-side-view="alliance"><span>⚑</span> <span data-i18n="side.alliance">Alianças</span></button>
+            <button class="nav-item" type="button" data-side-view="world"><span>❖</span> <span data-i18n="side.world">Mundo</span></button>
+          </nav>
+
+          <section class="panel-block" data-side-view="court">
+            <h2 data-i18n="panel.court.title">Corte e personagens</h2>
+            <div id="characterPanel" class="character-panel"></div>
+          </section>
+
+          <section class="panel-block" data-side-view="market">
+            <h2 data-i18n="panel.market.title">Mercado do reino</h2>
+            <div id="marketPanel" class="market-panel"></div>
+          </section>
+
+          <section class="panel-block" data-side-view="territory">
+            <h2 data-i18n="panel.territory.title">Território</h2>
+            <div id="expansionPanel" class="expansion-panel"></div>
+          </section>
+
+          <section class="panel-block" data-side-view="network">
+            <h2 data-i18n="panel.network.title">Rede do reino</h2>
+            <div id="multiplayerPanel" class="multiplayer-panel"></div>
+          </section>
+
+          <section class="panel-block" data-side-view="alliance">
+            <h2 data-i18n="panel.alliance.title">Alianças</h2>
+            <div id="alliancePanel" class="alliance-panel"></div>
+          </section>
+
+          <section class="panel-block" data-side-view="world">
+            <h2 data-i18n="panel.world.title">Mundo vivo</h2>
+            <div id="worldLivingPanel" class="world-living-panel"></div>
+          </section>
+
+          <section class="panel-block" data-side-view="court">
+            <h2 data-i18n="panel.profile.title">Perfil do reino</h2>
+            <div id="profilePanel" class="profile-panel" aria-live="polite"></div>
+          </section>
+
+          <section class="panel-block" data-side-view="log">
+              <h2 data-i18n="panel.log.title">Registro</h2>              <p class="panel-caption" data-i18n="panel.log.caption">Últimos acontecimentos. O histórico completo, com decisões e ganhos/perdas, fica em Relatórios.</p>              <ul id="eventLog" class="event-log"></ul>
+            </section>
+          </aside>
+        </main>
+        <section id="urgentBar" class="urgent-bar panel-block" aria-live="polite" hidden>
+          <button id="notificationToggle" class="notification-toggle" type="button" aria-expanded="false" data-i18n-aria-label="notification.closed.aria" aria-label="Abrir carta de notificações">
+            <img class="notification-art notification-art-closed" src="assets/closednotf.png" alt="">
+            <img class="notification-art notification-art-open" src="assets/notf.png" alt="">
+            <span id="notificationLetterContent" class="notification-letter-content"></span>
+            <span class="notification-toggle-copy">
+              <strong data-i18n="notification.closed.title">Carta selada</strong>
+              <small data-i18n="notification.closed.hint">Clique para abrir</small>
+            </span>
+          </button>
+          <div class="urgent-bar-grid">
+            <div id="urgentEventPanel"></div>
+            <div id="urgentLivingEventPanel"></div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <script src="lang/pt-br.js"></script>
+    <script src="lang/es-es.js"></script>
+    <script src="src/i18n.js"></script>
+    <script src="src/game-foundation.js"></script>
+    <script src="src/game-data.js"></script>
+    <script src="src/game-state.js"></script>
+    <script src="src/game-render.js"></script>
+    <script src="src/game-actions.js"></script>
+  </body>
+</html>
