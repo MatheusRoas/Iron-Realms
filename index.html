@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Iron Realms</title>
     <link rel="stylesheet" href="style.css" />
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#2e1a0e" />
   </head>
   <body>
     <div class="app-shell">
@@ -219,5 +221,9 @@
     <script src="src/game-state.js"></script>
     <script src="src/game-render.js"></script>
     <script src="src/game-actions.js"></script>
-  </body>
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js');
+      }
+    </script>
 </html>
