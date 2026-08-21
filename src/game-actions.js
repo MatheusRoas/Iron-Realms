@@ -610,6 +610,81 @@ function applyOfflineProgress() {
   }
 }
 
+function initAIKingdoms() {
+  if (state.aiKingdoms) {
+    return;
+  }
+  state.aiKingdoms = cloneState(initialAIState);
+}
+
+// Weighted random pick influenced by personality weight and noise.
+function aiRoll(weight) {
+  return Math.random() * 100 < weight * (0.7 + Math.random() * 0.6);
+}
+
+function tickAI() {
+  initAIKingdoms();
+  const now = Date.now();
+  const playerStrength = getArmyStrength() + getDefenseScore();
+
+  aiKingdomCatalog.forEach((catalog) => {
+    const ai = state.aiKingdoms[catalog.id];
+    if (!ai || now < ai.nextActionAt) {
+      return;
+    }
+
+    const p = catalog.personality;
+
+    // Decide action via personality weights with noise
+    let action = null;
+
+    if (aiRoll(p.aggressive) && ai.strength > 30 && playerStrength < ai.strength * 1.4) {
+      action = 'raid';
+    } else if (aiRoll(p.expansionist) && ai.resources > 60) {
+      action = 'expand';
+    } else if (aiRoll(p.economic)) {
+      action = 'gather';
+    } else if (aiRoll(p.diplomatic)) {
+      action = 'envoy';
+    }
+
+    if (!action) {
+      ai.nextActionAt = now + (30 + Math.random() * 45) * 1000;
+      return;
+    }
+
+    if (action === 'raid') {
+      const stolen = Math.round(Math.min(30 + Math.random() * 30, state.resources.food + state.resources.gold));
+      const damage = Math.round(stolen * 0.4);
+      state.resources.food = Math.max(0, state.resources.food - damage);
+      state.resources.gold = Math.max(0, state.resources.gold - Math.round(damage * 0.5));
+      ai.resources += stolen;
+      ai.lastAction = 'raid';
+      addLog(`${catalog.name} lançou uma incursão contra o reino. Recursos saqueados: ${damage}.`);
+      pushReport('war', `Incursão de ${catalog.name}`, `${catalog.name} atacou o reino com força de ${ai.strength}.`, `Danos sofridos: ${damage} em recursos. Reputação mantida. Fortaleça sua defesa.`);
+      showToast(`⚔ ${catalog.name} saqueou o reino!`, 'danger');
+    } else if (action === 'expand') {
+      ai.territory = Math.min(6, ai.territory + 1);
+      ai.resources -= 40;
+      ai.lastAction = 'expand';
+      addLog(`${catalog.name} expandiu seu território para novas terras.`);
+    } else if (action === 'gather') {
+      ai.resources = Math.min(400, ai.resources + 20 + Math.round(Math.random() * 20));
+      ai.strength = Math.min(120, ai.strength + Math.round(Math.random() * 5));
+      ai.lastAction = 'gather';
+    } else if (action === 'envoy') {
+      const reputationGain = 3 + Math.round(Math.random() * 4);
+      awardReputation(reputationGain, `${catalog.name} enviou um emissário com boas novas.`);
+      ai.lastAction = 'envoy';
+      addLog(`Um emissário de ${catalog.name} chegou ao castelo trazendo presentes.`);
+    }
+
+    // Next action in 60–120s, faster for aggressive kingdoms
+    const baseDelay = p.aggressive > 60 ? 45 : 75;
+    ai.nextActionAt = now + (baseDelay + Math.random() * 45) * 1000;
+  });
+}
+
 function gameTick() {
   const now = Date.now();
   const elapsedSeconds = (now - state.lastUpdatedAt) / 1000;
@@ -627,6 +702,7 @@ function gameTick() {
   resolveExpedition();
   triggerRandomEvent();
   triggerLivingWorldEvent();
+  tickAI();
   state.lastUpdatedAt = now;
   renderAll();
   saveState();

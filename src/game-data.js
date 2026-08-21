@@ -444,6 +444,7 @@ const initialState = {
     buildingsCompleted: 0
   },
   lastUpdatedAt: Date.now(),
+  aiKingdoms: null,
   log: [
     'A corte do reino se reúne sob sua bandeira.',
     'Sua administração começou a tomar forma.'
@@ -557,6 +558,50 @@ const eventCatalog = [
     ]
   }
 ];
+
+// AI kingdoms — each NPC realm has a personality that drives its decisions.
+// weights: aggressive, economic, expansionist, diplomatic (0–100)
+const aiKingdomCatalog = [
+  {
+    id: 'vorn',
+    name: 'Reino de Vorn',
+    color: 'crimson',
+    home: '3,-2',
+    personality: { aggressive: 80, economic: 20, expansionist: 60, diplomatic: 10 },
+    description: 'Senhores da guerra do leste. Atacam com frequência mas negociam pouco.'
+  },
+  {
+    id: 'elara',
+    name: 'Principado de Elara',
+    color: 'royalblue',
+    home: '-3,3',
+    personality: { aggressive: 15, economic: 90, expansionist: 40, diplomatic: 70 },
+    description: 'Comerciantes astutos do norte. Preferem lucro a sangue.'
+  },
+  {
+    id: 'dreth',
+    name: 'Clã de Dreth',
+    color: 'saddlebrown',
+    home: '-4,-3',
+    personality: { aggressive: 60, economic: 30, expansionist: 85, diplomatic: 20 },
+    description: 'Bárbaros das montanhas. Expandem sem parar, mas com pouca estratégia.'
+  },
+  {
+    id: 'sola',
+    name: 'Liga de Sola',
+    color: 'goldenrod',
+    home: '4,3',
+    personality: { aggressive: 25, economic: 65, expansionist: 35, diplomatic: 90 },
+    description: 'Diplomatas do sul. Formam alianças e cobram favores.'
+  }
+];
+
+const initialAIState = {
+  vorn:  { id: 'vorn',  strength: 55, resources: 120, territory: 2, stance: 'neutral', lastAction: null, nextActionAt: 0 },
+  elara: { id: 'elara', strength: 40, resources: 200, territory: 2, stance: 'neutral', lastAction: null, nextActionAt: 0 },
+  dreth: { id: 'dreth', strength: 65, resources: 80,  territory: 1, stance: 'neutral', lastAction: null, nextActionAt: 0 },
+  sola:  { id: 'sola',  strength: 35, resources: 160, territory: 3, stance: 'neutral', lastAction: null, nextActionAt: 0 }
+};
 
 const counselorLines = [
   'Meu rei, a serraria está operando acima da média.',

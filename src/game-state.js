@@ -249,7 +249,8 @@ function loadState() {
         buildingsCompleted: typeof parsed.stats?.buildingsCompleted === 'number' ? parsed.stats.buildingsCompleted : 0
       },
       log: Array.isArray(parsed.log) ? parsed.log : cloneState(initialState.log),
-      reports: Array.isArray(parsed.reports) ? parsed.reports : cloneState(initialState.reports)
+      reports: Array.isArray(parsed.reports) ? parsed.reports : cloneState(initialState.reports),
+      aiKingdoms: parsed.aiKingdoms && typeof parsed.aiKingdoms === 'object' ? parsed.aiKingdoms : null
     };
   } catch (error) {
     console.warn('Falha ao ler save do reino.', error);
